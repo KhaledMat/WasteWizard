@@ -8,7 +8,6 @@ IN3 = 17
 IN4 = 4
 
 
-
 INPUT1_PIN = 26
 INPUT2_PIN = 19
 INPUT3_PIN = 13
@@ -44,7 +43,6 @@ pwm_in3 = GPIO.PWM(IN3, PWM_FREQUENCY)
 pwm_in4 = GPIO.PWM(IN4, PWM_FREQUENCY)
 
 
-
 # Function to turn the motor clockwise
 def clockwise(num):
     if num == 0:
@@ -54,6 +52,7 @@ def clockwise(num):
         pwm_in3.start(70)
         pwm_in4.start(0)
 
+
 # Function to turn the motor counter-clockwise
 def counterclockwise(num):
     if num == 0:
@@ -62,6 +61,7 @@ def counterclockwise(num):
     elif num == 1:
         pwm_in3.start(0)
         pwm_in4.start(70)
+
 
 # Stop the motor
 def stop(num):
@@ -81,8 +81,8 @@ def brake(num):
         pwm_in3.start(100)
         pwm_in4.start(100)
 
-def moveToContainer(container):
 
+def moveToContainer(container):
     if container == 0:
         GPIO.add_event_detect(INPUT1_PIN, GPIO.FALLING)
         while True:
@@ -112,20 +112,28 @@ def moveToContainer(container):
                 brake(0)
                 break
 
+
 def unlock():
     clockwise(1)
     time.sleep(5)
     stop(1)
+
 
 def lock():
     GPIO.add_event_detect(LOCK_PIN, GPIO.RISING)
     while True:
         counterclockwise(1)
         if GPIO.event_detected(LOCK_PIN):
-                brake(1)
-                break
+            brake(1)
+            break
+
 
 def detectTrash():
+    # open cv capture video
+    # save file
+    # send file over web socket
+
+    # get answer
 
     # find out the type of garbage
     trashType = 1
@@ -146,7 +154,7 @@ try:
         input2_state = GPIO.input(INPUT2_PIN)
         input3_state = GPIO.input(INPUT3_PIN)
         input4_state = GPIO.input(INPUT4_PIN)
-    
+
 
 except KeyboardInterrupt:
     print("Interrupted by user")
