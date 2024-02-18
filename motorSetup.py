@@ -7,8 +7,11 @@ IN2 = 27
 IN3 = 17
 IN4 = 4
 
+INPUT_PIN = 26
+
 # Set GPIO mode
 GPIO.setmode(GPIO.BCM)
+GPIO.setup(INPUT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 # Set GPIO pins as output
 GPIO.setup(IN1, GPIO.OUT)
@@ -41,17 +44,22 @@ def stop():
 
 # Test the motor
 try:
-    # Test clockwise rotation
-    print("Clockwise rotation")
-    clockwise()
+    while True:
+        # Check input state
+        input_state = GPIO.input(INPUT_PIN)
 
-    # Test counter-clockwise rotation
-    print("Counter-clockwise rotation")
-    counterclockwise()
+        # If input is high, call clockwise() function
+        if input_state == GPIO.HIGH:
+            clockwise()
+            print("Clockwise rotation")
+        # If input is low, stop the motor and break the loop
+        else:
+            stop()
+            print("Input is low. Stopping motor.")
+            break
 
-    # Stop the motor
-    print("Stopping motor")
-    stop()
+        # Wait a short duration before checking the input state again
+        time.sleep(0.1)
 
 except KeyboardInterrupt:
     print("Interrupted by user")
@@ -59,3 +67,4 @@ except KeyboardInterrupt:
 finally:
     # Cleanup GPIO pins
     GPIO.cleanup()
+    
