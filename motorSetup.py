@@ -48,10 +48,10 @@ cap = cv2.VideoCapture(1)  # 0 represents the first USB camera, 1 for the second
 # Function to turn the motor clockwise
 def clockwise(num):
     if num == 0:
-        pwm_in1.start(100)
+        pwm_in1.start(70)
         pwm_in2.start(0)
     elif num == 1:
-        pwm_in3.start(100)
+        pwm_in3.start(70)
         pwm_in4.start(0)
 
 
@@ -59,10 +59,10 @@ def clockwise(num):
 def counterclockwise(num):
     if num == 0:
         pwm_in1.start(0)
-        pwm_in2.start(100)
+        pwm_in2.start(70)
     elif num == 1:
         pwm_in3.start(0)
-        pwm_in4.start(100)
+        pwm_in4.start(70)
 
 
 # Stop the motor
