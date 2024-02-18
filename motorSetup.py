@@ -43,43 +43,49 @@ pwm_in2 = GPIO.PWM(IN2, PWM_FREQUENCY)
 pwm_in3 = GPIO.PWM(IN3, PWM_FREQUENCY)
 pwm_in4 = GPIO.PWM(IN4, PWM_FREQUENCY)
 
+
+GPIO.add_event_detect(INPUT1_PIN, GPIO.FALLING)
+GPIO.add_event_detect(INPUT2_PIN, GPIO.FALLING)
+GPIO.add_event_detect(INPUT3_PIN, GPIO.FALLING)
+GPIO.add_event_detect(INPUT4_PIN, GPIO.FALLING)
+
 cap = cv2.VideoCapture(1)  # 0 represents the first USB camera, 1 for the second, and so on
 
 # Function to turn the motor clockwise
 def clockwise(num):
-    if num == 0:
-        pwm_in1.start(70)
+    if num == 1:
+        pwm_in1.start(80)
         pwm_in2.start(0)
-    elif num == 1:
-        pwm_in3.start(70)
+    elif num == 0:
+        pwm_in3.start(80)
         pwm_in4.start(0)
 
 
 # Function to turn the motor counter-clockwise
 def counterclockwise(num):
-    if num == 0:
+    if num == 1:
         pwm_in1.start(0)
-        pwm_in2.start(70)
-    elif num == 1:
+        pwm_in2.start(80)
+    elif num == 0:
         pwm_in3.start(0)
-        pwm_in4.start(70)
+        pwm_in4.start(80)
 
 
 # Stop the motor
 def stop(num):
-    if num == 0:
+    if num == 1:
         pwm_in1.start(0)
         pwm_in2.start(0)
-    elif num == 1:
+    elif num == 0:
         pwm_in3.start(0)
         pwm_in4.start(0)
 
 
 def brake(num):
-    if num == 0:
+    if num == 1:
         pwm_in1.start(100)
         pwm_in2.start(100)
-    elif num == 1:
+    elif num == 0:
         pwm_in3.start(100)
         pwm_in4.start(100)
 
@@ -87,7 +93,6 @@ def brake(num):
 def moveToContainer(container):
     if container == 0:
         print(0)
-        GPIO.add_event_detect(INPUT1_PIN, GPIO.FALLING)
         while True:
             counterclockwise(0)
             if GPIO.event_detected(INPUT1_PIN):
@@ -95,15 +100,14 @@ def moveToContainer(container):
                 break
     elif container == 1:
         print(1)
-        GPIO.add_event_detect(INPUT2_PIN, GPIO.FALLING)
         while True:
-            counterclockwise(0)
+            print(1)
+            clockwise(0)
             if GPIO.event_detected(INPUT2_PIN):
                 brake(0)
                 break
     elif container == 2:
         print(2)
-        GPIO.add_event_detect(INPUT3_PIN, GPIO.FALLING)
         while True:
             counterclockwise(0)
             if GPIO.event_detected(INPUT3_PIN):
@@ -111,7 +115,6 @@ def moveToContainer(container):
                 break
     elif container == 3:
         print(3)
-        GPIO.add_event_detect(INPUT4_PIN, GPIO.FALLING)
         while True:
             counterclockwise(0)
             if GPIO.event_detected(INPUT4_PIN):
@@ -158,7 +161,8 @@ def detectTrash():
     # get answer
 
     # find out the type of garbage
-    trashType = 3
+    trashType = 1
+    counterclockwise(0)
     moveToContainer(trashType)
     unlock()
     time.sleep(10)
