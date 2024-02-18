@@ -5,6 +5,6 @@ weights_path = "./runs/detect/train/weights/best.pt"  # Replace with your weight
 model = YOLO(weights_path)
 
 # Perform inference and store the results in a variable
-results = model("./img.jpg")  # List of Results objects
+results = model("./captured_image.jpg")  # List of Results objects
 
 # print(results)
