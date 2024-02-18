@@ -167,14 +167,6 @@ def detectTrash():
 
 try:
     while True:
-        clockwise(0)
-        time.sleep(2)
-        counterclockwise(0)
-        time.sleep(2)
-        clockwise(1)
-        time.sleep(2)
-        counterclockwise(1)
-        time.sleep(2)
         sensor_state = GPIO.input(IR_PIN)
         print(sensor_state)
         if sensor_state == GPIO.HIGH:
