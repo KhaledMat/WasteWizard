@@ -1,17 +1,18 @@
 import RPi.GPIO as GPIO
 import time
+import cv2
 
 # Define GPIO pins
-IN1 = 22
-IN2 = 27
-IN3 = 17
-IN4 = 4
+IN1 = 26
+IN2 = 19
+IN3 = 13
+IN4 = 6
 
 
-INPUT1_PIN = 26
-INPUT2_PIN = 19
-INPUT3_PIN = 13
-INPUT4_PIN = 6
+INPUT1_PIN = 22
+INPUT2_PIN = 27
+INPUT3_PIN = 17
+INPUT4_PIN = 4
 
 LOCK_PIN = 5
 
@@ -42,14 +43,15 @@ pwm_in2 = GPIO.PWM(IN2, PWM_FREQUENCY)
 pwm_in3 = GPIO.PWM(IN3, PWM_FREQUENCY)
 pwm_in4 = GPIO.PWM(IN4, PWM_FREQUENCY)
 
+cap = cv2.VideoCapture(1)  # 0 represents the first USB camera, 1 for the second, and so on
 
 # Function to turn the motor clockwise
 def clockwise(num):
     if num == 0:
-        pwm_in1.start(70)
+        pwm_in1.start(100)
         pwm_in2.start(0)
     elif num == 1:
-        pwm_in3.start(70)
+        pwm_in3.start(100)
         pwm_in4.start(0)
 
 
@@ -57,10 +59,10 @@ def clockwise(num):
 def counterclockwise(num):
     if num == 0:
         pwm_in1.start(0)
-        pwm_in2.start(70)
+        pwm_in2.start(100)
     elif num == 1:
         pwm_in3.start(0)
-        pwm_in4.start(70)
+        pwm_in4.start(100)
 
 
 # Stop the motor
@@ -84,6 +86,7 @@ def brake(num):
 
 def moveToContainer(container):
     if container == 0:
+        print(0)
         GPIO.add_event_detect(INPUT1_PIN, GPIO.FALLING)
         while True:
             counterclockwise(0)
@@ -91,6 +94,7 @@ def moveToContainer(container):
                 brake(0)
                 break
     elif container == 1:
+        print(1)
         GPIO.add_event_detect(INPUT2_PIN, GPIO.FALLING)
         while True:
             counterclockwise(0)
@@ -98,6 +102,7 @@ def moveToContainer(container):
                 brake(0)
                 break
     elif container == 2:
+        print(2)
         GPIO.add_event_detect(INPUT3_PIN, GPIO.FALLING)
         while True:
             counterclockwise(0)
@@ -105,6 +110,7 @@ def moveToContainer(container):
                 brake(0)
                 break
     elif container == 3:
+        print(3)
         GPIO.add_event_detect(INPUT4_PIN, GPIO.FALLING)
         while True:
             counterclockwise(0)
@@ -130,13 +136,29 @@ def lock():
 
 def detectTrash():
     # open cv capture video
-    # save file
+    if not cap.isOpened():
+        print("Error: Could not open camera.")
+    else:
+        while True:
+            sensor_state = GPIO.input(IR_PIN)
+            ret, frame = cap.read()
+            if ret:
+            # Save the captured frame as an image file
+                cv2.imwrite('captured_image.jpg', frame)
+                print("Image captured successfully.")
+            else:
+                print("Error: Failed to capture frame.")
+
+            # Release the VideoCapture object
+            cap.release()
+            break
+
     # send file over web socket
 
     # get answer
 
     # find out the type of garbage
-    trashType = 1
+    trashType = 3
     moveToContainer(trashType)
     unlock()
     time.sleep(10)
@@ -145,15 +167,37 @@ def detectTrash():
 
 try:
     while True:
+        clockwise(0)
+        time.sleep(2)
+        counterclockwise(0)
+        time.sleep(2)
+        clockwise(1)
+        time.sleep(2)
+        counterclockwise(1)
+        time.sleep(2)
         sensor_state = GPIO.input(IR_PIN)
+        print(sensor_state)
         if sensor_state == GPIO.HIGH:
-            detectTrash()
-            print("Trash Detected.")
+            time.sleep(1)
+            sensor_state = GPIO.input(IR_PIN)
+            print(sensor_state)
+            if sensor_state == GPIO.HIGH:
+                time.sleep(1)
+                sensor_state = GPIO.input(IR_PIN)
+                print(sensor_state)
+                if sensor_state == GPIO.HIGH:
+                    time.sleep(1)
+                    sensor_state = GPIO.input(IR_PIN)
+                    print(sensor_state)
+                    if sensor_state == GPIO.HIGH:
+                        time.sleep(1)
+                        sensor_state = GPIO.input(IR_PIN)
+                        print(sensor_state)
+                        if sensor_state == GPIO.HIGH:
+                            print("Trash Detected.")
+                            detectTrash()
+                     
 
-        input1_state = GPIO.input(INPUT1_PIN)
-        input2_state = GPIO.input(INPUT2_PIN)
-        input3_state = GPIO.input(INPUT3_PIN)
-        input4_state = GPIO.input(INPUT4_PIN)
 
 
 except KeyboardInterrupt:
