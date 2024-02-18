@@ -1,4 +1,4 @@
-train: /data/images/train/
-val : /data/images/val/
+train: /content/drive/My Drive/WasteWizard/data/images/train/
+val : /content/drive/My Drive/WasteWizard/data/images/val/
 nc: 4 
 names: ["plastic", "metal", "trash","glass"]
