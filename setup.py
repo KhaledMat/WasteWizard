@@ -1,18 +1,22 @@
-import picamera
-import time
+import cv2
 
-# Function to capture an image
-def capture_image():
-    with picamera.PiCamera() as camera:
-        # Set resolution
-        camera.resolution = (640, 480)  # Adjust resolution as needed
-        # Start preview for a brief moment to initialize camera settings
-        camera.start_preview()
-        time.sleep(2)  # Wait for camera to initialize
-        # Capture image
-        camera.capture('test_image.jpg')  # Adjust file name as needed
+# Create VideoCapture object
+cap = cv2.VideoCapture(0)  # 0 represents the first USB camera, 1 for the second, and so on
 
-if __name__ == "__main__":
-    # Capture an image
-    capture_image()
-    print("Image captured successfully.")
+# Check if camera opened successfully
+if not cap.isOpened():
+    print("Error: Could not open camera.")
+else:
+    # Capture a single frame
+    ret, frame = cap.read()
+
+    # Check if frame captured successfully
+    if ret:
+        # Save the captured frame as an image file
+        cv2.imwrite('captured_image.jpg', frame)
+        print("Image captured successfully.")
+    else:
+        print("Error: Failed to capture frame.")
+
+    # Release the VideoCapture object
+    cap.release()
